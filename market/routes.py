@@ -1,5 +1,5 @@
 from market import app
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, flash
 from market.models import Item, User
 
 from market.forms import RegisterForm
@@ -34,6 +34,9 @@ def register_page():
     # form.errors is a dictionary that has all the fails on the form validations declared in the form (form.py/RegisterForm)
     if form.errors != {}: 
       for err_msg in form.errors.values():
-        print(f'There was an error with creating a user: {err_msg}')
+        # print(f'There was an error with creating a user: {err_msg}')
+        # I can add a category of the flash BC maybe I just want to inform
+        # I'm sending the category "danger" BC bootstraps have one, So that I can customize the message
+        flash(f'There was an error with creating a user: {err_msg}', category='danger')
 
     return render_template('register.html', form=form)
