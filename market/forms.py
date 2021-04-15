@@ -27,3 +27,10 @@ class RegisterForm(FlaskForm):
     # I don't need to add the validator to psw2 bc it must be = to psw1
     password2 = PasswordField(label='Confirm Password', validators=[EqualTo('password1', message='Passwords must match'), DataRequired()])
     submit = SubmitField(label='Create Account')
+
+
+
+class LoginForm(FlaskForm):
+    username = StringField(label='User Name:', validators=[DataRequired()])
+    password = PasswordField(label='Password:', validators=[DataRequired()])
+    submit = SubmitField(label='Sign in')
