@@ -16,5 +16,9 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 # login mgmt
 login_manager = LoginManager(app)
+# especify where the login route is located, so I can use login declarators in my routes, and redirect the user when needed.
+login_manager.login_view = "login_page" # expects the login route
+# this is for display flash messages
+login_manager.login_message_category = 'info'
 
 from market import routes

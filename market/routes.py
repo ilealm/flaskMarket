@@ -4,8 +4,9 @@ from market.models import Item, User
 
 from market.forms import RegisterForm, LoginForm
 from market import db
-# for login. Makes acccesible from other pages, eg. base.html
-from flask_login import login_user
+# for login/logout Makes acccesible from other pages, eg. base.html
+# I can also use the declarator loggin_required to force routes to be logged
+from flask_login import login_user, logout_user, login_required
 
 
 
@@ -15,6 +16,8 @@ def home_page():
     return render_template('home.html')
 
 @app.route('/market')
+# this will take the user auto to login page. I need to configure in __init__ where to go
+@login_required
 def market_page():
   items = Item.query.all()
   return render_template('market.html', items=items)
@@ -33,6 +36,12 @@ def register_page():
                             password =  form.password1.data   )
       db.session.add(user_to_create)
       db.session.commit()
+
+      # log the new user
+      login_user(user_to_create)
+      # inform the user is logged
+      flash(f"Account created successfully! You are now logged in as {user_to_create.username}", category='success')
+
       return redirect(url_for('market_page'))
 
     # form.errors is a dictionary that has all the fails on the form validations declared in the form (form.py/RegisterForm)
@@ -66,3 +75,13 @@ def login_page():
           flash('Username and password are not match! Please try again', category='danger')
 
     return render_template('login.html', form=form)
+
+
+
+
+@app.route('/logout')
+def logout_page():
+    # built in fun in flask to logout users 
+    logout_user()
+    flash("You have been logged out!", category='info')
+    return redirect(url_for("home_page"))
