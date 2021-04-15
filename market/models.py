@@ -27,6 +27,15 @@ class User(db.Model, UserMixin):
     # I need lazy=True to grab all the user's items in one shot
     items = db.relationship('Item', backref='owned_user', lazy=True)
 
+
+    # property to format the budget
+    @property
+    def prettier_budget(self):
+        if len(str(self.budget)) >= 4:
+            return f'$ {str(self.budget)[:-3]},{str(self.budget)[-3:]}'
+        else:
+            return f"$ {self.budget}"
+
     # the next lines are for hashing the passwordjj
     # create an attribute that will be accesable from each instance. 
     @property

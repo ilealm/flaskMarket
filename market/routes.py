@@ -4,7 +4,7 @@ from market.models import Item, User
 
 from market.forms import RegisterForm, LoginForm
 from market import db
-# for login
+# for login. Makes acccesible from other pages, eg. base.html
 from flask_login import login_user
 
 
