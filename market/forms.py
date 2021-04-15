@@ -8,7 +8,7 @@ from market.models import User
 
 # Register form
 class RegisterForm(FlaskForm):
-    # I need to validate that the user doesn't exists before trying to add it to the table
+    # I need to validate unique fields before trying to add it to the table
     # Flask will execute this functions auto, I just NEED TO ADD "validate_" and the field
     def validate_username(self, username_to_check):
         user = User.query.filter_by(username=username_to_check.data).first()
@@ -27,3 +27,10 @@ class RegisterForm(FlaskForm):
     # I don't need to add the validator to psw2 bc it must be = to psw1
     password2 = PasswordField(label='Confirm Password', validators=[EqualTo('password1', message='Passwords must match'), DataRequired()])
     submit = SubmitField(label='Create Account')
+
+
+
+class LoginForm(FlaskForm):
+    username = StringField(label='User Name:', validators=[DataRequired()])
+    password = PasswordField(label='Password:', validators=[DataRequired()])
+    submit = SubmitField(label='Sign in')

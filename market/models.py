@@ -1,4 +1,5 @@
 from market import db
+from market import bcrypt
 
 # MODELS
 
@@ -13,6 +14,17 @@ class User(db.Model):
     # owner of specific item
     # I need lazy=True to grab all the user's items in one shot
     items = db.relationship('Item', backref='owned_user', lazy=True)
+
+    # the next lines are for hashing the passwordjj
+    # create an attribute that will be accesable from each instance. 
+    @property
+    def password(self):
+        return self.password
+    
+    @password.setter
+    def password(self, plain_text_password):    
+        # overwrite what is going to be store in password_hash
+        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
     
 
 
