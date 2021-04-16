@@ -21,6 +21,7 @@ def home_page():
 def market_page():
     # the next line is for the modal windows
     purchase_form = PurchaseItemForm()
+    selling_form = SellItemForm()
 
     # this give me a dict with the values of the instance
     # print(purchase_form.__dict__)
@@ -50,7 +51,12 @@ def market_page():
     if request.method == 'GET':
         # items = Item.query.all()
         items = Item.query.filter_by(owner=None)
-        return render_template('market.html', items=items, purchase_form=purchase_form)
+        owned_items = Item.query.filter_by(owner=current_user.id)
+        return render_template('market.html', 
+              items=items, 
+              purchase_form=purchase_form, 
+              owned_items=owned_items, 
+              selling_form=selling_form )
 
 
 @app.route('/register', methods=['GET', 'POST'])
