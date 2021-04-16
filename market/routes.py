@@ -1,12 +1,12 @@
 from market import app
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 from market.models import Item, User
 
-from market.forms import RegisterForm, LoginForm
+from market.forms import RegisterForm, LoginForm, PurchaseItemForm, SellItemForm
 from market import db
 # for login/logout Makes acccesible from other pages, eg. base.html
 # I can also use the declarator loggin_required to force routes to be logged
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 
 
@@ -15,12 +15,32 @@ from flask_login import login_user, logout_user, login_required
 def home_page():
     return render_template('home.html')
 
-@app.route('/market')
+@app.route('/market', methods=['GET','POST'])
 # this will take the user auto to login page. I need to configure in __init__ where to go
 @login_required
 def market_page():
-  items = Item.query.all()
-  return render_template('market.html', items=items)
+    # the next line is for the modal windows 
+    purchase_form = PurchaseItemForm()
+    
+    # this give me a dict with the values of the instance
+    # print(purchase_form.__dict__)
+    # then, I can access the elements like a dict
+    # print(purchase_form['submit'])
+    # I need to have imported request
+    # print(request.form.get('purchased_item'))
+
+    if request.method == 'POST':
+      purchased_item = request.form.get('purchased_item')
+      p_item_object = Item.query.filter_by(name=purchased_item).first()
+      if p_item_object:
+        # assign the product to the logged user
+        p_item_object.owner = current_user.id
+        current_user.budget -= p_item_object.price
+        db.session.commit()
+
+
+    items = Item.query.all()
+    return render_template('market.html', items=items, purchase_form=purchase_form)
 
 
 @app.route('/register', methods=['GET','POST'])
